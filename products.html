@@ -3,6 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ============================================================
+       Google tag (gtag.js)  --  Practical Part 3 Step 9 / Part 4 Step 10
+       Set your GA4 Measurement ID in the const below, then update every page
+       at once from the site folder with:   ./set-ga-id.sh  YOUR-ID
+       ============================================================ -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E4D54R6HF2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    const GA_MEASUREMENT_ID = 'G-E4D54R6HF2';   // <-- YOUR Measurement ID goes here
+    gtag('js', new Date());
+    gtag('config', GA_MEASUREMENT_ID);
+  </script>
   <title>ZimShop | Products</title>
   <link rel="stylesheet" href="style.css">
 </head>

@@ -28,9 +28,40 @@ function trackEvent(eventName, properties={}){
   localStorage.setItem(EVENT_KEY,JSON.stringify(events));
   console.log("ANALYTICS EVENT:",event);
 
+  // ---- Send the same event to Google Analytics 4 -------------------------
+  // gtag() and GA_MEASUREMENT_ID come from the snippet in the <head> of each
+  // page. Until you replace G-XXXXXXXXXX with your real Measurement ID, this
+  // block stays switched off.
+  if(gaIsLive() && typeof gtag === "function"){
+    // GA4 already records page_view by itself (gtag('config') plus Enhanced
+    // Measurement), so forwarding ours would double-count it.
+    if(eventName !== "page_view"){
+      const gaProps = Object.assign({}, properties, {
+        page_location: location.href,
+        page_path: location.pathname,
+        demo_user_id: event.user_id,
+        demo_session_id: event.session_id
+      });
+      // GA4 needs value + currency together to report revenue.
+      if(typeof gaProps.value === "number") gaProps.currency = "USD";
+      gtag("event", eventName, gaProps);
+    }
+  }
+
   // OPTIONAL WOOPRA INTEGRATION:
   // Once Woopra is installed, this can be changed to:
   // if(window.woopra) woopra.track(eventName, properties);
+}
+
+// True only once a real Measurement ID replaces the placeholder.
+function gaIsLive(){
+  try{
+    return typeof GA_MEASUREMENT_ID === "string"
+      && /^G-[A-Z0-9]{6,}$/.test(GA_MEASUREMENT_ID)
+      && GA_MEASUREMENT_ID.indexOf("XXXX") === -1;
+  }catch(e){
+    return false;   // snippet not present on this page
+  }
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
